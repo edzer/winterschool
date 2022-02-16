@@ -1,0 +1,10 @@
+---
+title: "Time-varying spatial data; raster and vector data cubes; recap on ECZ Geospatial modelling"
+author: "Edzer Pebesma"
+date: "2/16/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
