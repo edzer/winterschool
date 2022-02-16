@@ -1,0 +1,10 @@
+---
+title: "Intro to R and R- Spatial; insight on datacubes"
+author: "Edzer Pebesma"
+date: "2/16/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
