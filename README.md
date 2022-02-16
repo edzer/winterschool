@@ -11,6 +11,6 @@ Teaching materials for the Winter School on ECZ – Sustainable land management 
 
 Links to:
 
-* [slides day 4](https::/edzer.github.io/winterschool/day4.html)
-* [slides day 7](https::/edzer.github.io/winterschool/day7.html)
-* [slides day 8](https::/edzer.github.io/winterschool/day8.html)
+* [slides day 4](https://edzer.github.io/winterschool/day4.html)
+* [slides day 7](https://edzer.github.io/winterschool/day7.html)
+* [slides day 8](https://edzer.github.io/winterschool/day8.html)
