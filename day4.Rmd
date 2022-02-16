@@ -7,4 +7,85 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+if (Sys.getenv("USER") == "edzer") {
+		set.seed(15751)
+}
 ```
+
+## What is R?
+
+According to the [website](https://r-project.org), "R is a free
+software environment for statistical computing and graphics. It
+compiles and runs on a wide variety of UNIX platforms, Windows
+and MacOS."
+
+
+## What is Rstudio?
+
+[Rstudio](https://rstudio.com/) is a company that develops and
+distributes a frontend, or IDE, for R that is free and open source,
+called Rstudio desktop. It also develops commercial derivatives,
+mostly targeted at businesses. These products use the same R
+(processor) as R.
+
+Other front-ends include 
+
+* R command line
+* teminal-based, e.g. vim with Nvim-R, or emacs with ESS
+* a browser communicating with Rstudio server (also free)
+* R in visual studio
+* Jupyter or JupyterLab (Jupyter developed from IPython notebooks and once stood for "Julia, Python, R", it now probably caters more languages)
+
+## What is markdown, R-markdown?
+
+[Markdown](https://en.wikipedia.org/wiki/Markdown) is a leightweight
+markup language for formatted text (headers, lists, figures, equations). 
+
+[R-markdown](https://rmarkdown.rstudio.com/) extends markdown with 
+sections containing R code, and allows for notebook functionality:
+
+* running the code in the code sections, inserting output (text, figures) in the rendered document (html, pdf)
+* interacting with the document in a notebook-style (run individual code sections, scrutinize output)
+
+These slides are written in R-markdown, and can be found as files with extension `.Rmd` on this repository: https://github.com/edzer/winterschool ; the rendered html output files are linked in the README file in the repository.
+
+## Why is R used?
+
+* R is a language dedicated to data analysis, unlike general programming languages like C++ or Python. In R, you don't have to load a package or module first before you can plot data, as in
+ 
+```{r}
+hist(rnorm(500))
+```
+
+* Many people use R because many other people do:
+    * to solve data analysis problems
+    * to share data analysis problems (share data, share R script)
+    * to wrap a new data analysis method in an R package, and distribute that, e.g. through [CRAN](https://cran.r-project.org/) and/or [github](https://github.com/r-spatial/stars)
+
+
+## What is an R package?
+
+An R package wraps
+
+* R code
+* possibly further code written in C, C++, Fortran, java, etc.
+* documentation
+* data sets
+* examples, tutorials
+
+in a structured way, so that others can easily install it, e.g. from CRAN by
+
+```{r eval=FALSE}
+install.packages("sf")
+```
+
+After that, a package can be loaded by
+
+```{r}
+library(sf)
+```
+
+after which its full functionality becomes available to the R user.
+
+R packages extend R with new, often dedicated or domain specific functionality.
+
