@@ -14,3 +14,4 @@ Links to:
 * [slides day 4](https://edzer.github.io/winterschool/day4.html)
 * [slides day 7](https://edzer.github.io/winterschool/day7.html)
 * [slides day 8](https://edzer.github.io/winterschool/day8.html)
+* We will use the book [Spatial Data Science with R](https://r-spatial.org/book), which is available entirely online, for free.

@@ -405,12 +405,23 @@ pre code {
 <li>examples, tutorials</li>
 </ul>
 <p>in a structured way, so that others can easily install it, e.g. from CRAN by</p>
-<pre class="r"><code>install.packages(&quot;sf&quot;)</code></pre>
+<pre class="r"><code>install.packages(&quot;stars&quot;)</code></pre>
+<p>or directly from github by</p>
+<pre class="r"><code>library(remotes) # install.packages(&quot;remotes&quot;) if you don&#39;t have this
+install_github(&quot;r-spatial/stars&quot;)</code></pre>
 <p>After that, a package can be loaded by</p>
-<pre class="r"><code>library(sf)</code></pre>
+<pre class="r"><code>library(stars)</code></pre>
+<pre><code>## Loading required package: abind</code></pre>
+<pre><code>## Loading required package: sf</code></pre>
 <pre><code>## Linking to GEOS 3.10.1, GDAL 3.4.0, PROJ 8.2.0; sf_use_s2() is TRUE</code></pre>
 <p>after which its full functionality becomes available to the R user.</p>
-<p>R packages extend R with new, often dedicated or domain specific functionality.</p>
+<p><strong>R packages extend R with new, often dedicated or domain specific functionality.</strong></p>
+</div>
+<div id="r-spatial" class="section level2">
+<h2>R-Spatial</h2>
+<p>For a historical perspective, see the <a href="https://www.youtube.com/watch?v=mEAyQ8bv1zU">youtube video</a> by Roger Bivand (Why R? 2020 Keynote: “Applied Spatial Data Analysis with R: retrospect and prospect”).</p>
+<p>For a current perspective, see my <a href="https://www.youtube.com/watch?v=cK08bxUJn5A">youtube video</a> (UseR! 2021 keynote, “R-Spatial”).</p>
+<p>For a current book on Spatial Data Science, see <a href="https://r-spatial.org/book">here</a>. We will use this book in the current summer school. Please open chapter 1.</p>
 </div>
 
 

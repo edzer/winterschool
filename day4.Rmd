@@ -76,16 +76,33 @@ An R package wraps
 in a structured way, so that others can easily install it, e.g. from CRAN by
 
 ```{r eval=FALSE}
-install.packages("sf")
+install.packages("stars")
+```
+
+or directly from github by
+
+```{r eval=FALSE}
+library(remotes) # install.packages("remotes") if you don't have this
+install_github("r-spatial/stars")
 ```
 
 After that, a package can be loaded by
 
 ```{r}
-library(sf)
+library(stars)
 ```
 
 after which its full functionality becomes available to the R user.
 
-R packages extend R with new, often dedicated or domain specific functionality.
+**R packages extend R with new, often dedicated or domain specific functionality.**
+
+
+## R-Spatial
+
+For a historical perspective, see the [youtube video](https://www.youtube.com/watch?v=mEAyQ8bv1zU) by Roger Bivand (Why R? 2020 Keynote: "Applied Spatial Data Analysis with R: retrospect and prospect").
+
+For a current perspective, see my [youtube video](https://www.youtube.com/watch?v=cK08bxUJn5A) (UseR! 2021 keynote, "R-Spatial").
+
+For a current book on Spatial Data Science, see [here](https://r-spatial.org/book). We will use this book in the current summer school. Please open chapter 1.
+
 
