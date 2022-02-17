@@ -1,4 +1,4 @@
-FILE = day4
+FILE = st
 
 all:
 	vi $(FILE).Rmd
