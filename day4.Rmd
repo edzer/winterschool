@@ -62,6 +62,18 @@ hist(rnorm(500))
     * to share data analysis problems (share data, share R script)
     * to wrap a new data analysis method in an R package, and distribute that, e.g. through [CRAN](https://cran.r-project.org/) and/or [github](https://github.com/r-spatial/stars)
 
+* one aspect, often overlooked, in which R distinguishes itself from general purpose language such as Python, is the availability of a `NA` value for "not available". This is distinct from the "not a number", which is the result of an invalid computation:
+
+```{r}
+0/0 # NaN
+a <- c(1, NA, 3)
+a + 2.5
+mean(a)
+mean(a, na.rm = TRUE)
+c("Alice", NA, "Charlie")
+b <- c(TRUE, FALSE, NA, TRUE)
+!b
+```
 
 ## What is an R package?
 
@@ -105,4 +117,20 @@ For a current perspective, see my [youtube video](https://www.youtube.com/watch?
 
 For a current book on Spatial Data Science, see [here](https://r-spatial.org/book). We will use this book in the current summer school. Please open chapter 1.
 
+
+## Intro to R Spatial
+
+Go to chapter 1 of the [Spatial Data Science book](https://r-spatial.org/book).
+
+## An insight on datacubes
+
+Go to the data cubes chapter of the [Spatial Data Science book](https://r-spatial.org/book).
+
+## Preparation for Day 7
+
+* read chapters 3 and 7 from the [Spatial Data Science book](https://r-spatial.org/book).
+
+## Preparation for Day 8
+
+* read chapters 5 and 6 from the [Spatial Data Science book](https://r-spatial.org/book).
 
