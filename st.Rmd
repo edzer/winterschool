@@ -149,3 +149,9 @@ DF.m %>%
   plot(key.pos = 1, main = "time of maximum daily mean temp.", reset = FALSE)
 st_geometry(outline) |> plot(border = "orange", add = TRUE)
 ```
+
+There are only two values in the map:
+```{r}
+(u = unique(as.vector(DF.m[[1]])))
+st_get_dimension_values(DF.st, "time")[u]
+```
