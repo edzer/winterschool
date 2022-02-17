@@ -128,6 +128,7 @@ Go to the data cubes chapter of the [Spatial Data Science book](https://r-spatia
 
 ## Preparation for Day 7
 
+* make sure you have R and Rstudio running on your computer, and install a number of spatial packages like `sf`, `stars`, and `terra`
 * read chapters 3 and 7 from the [Spatial Data Science book](https://r-spatial.org/book).
 
 ## Preparation for Day 8
