@@ -117,26 +117,57 @@ s_nd = s[-w,] # deselect those second
 Let us try the kriging again:
 ```{r}
 kr = krige(bulk_den~1, s_nd, ra, v.fit)
-plot(kr[1], reset = FALSE, main = "bd kriging prediction")
+plot(kr[1], reset = FALSE, main = "bulkdensity kriging prediction")
 plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
 kr$se = sqrt(kr$var1.var)
-plot(kr["se"], reset = FALSE, breaks = "equal", main = "bd kriging standard error")
+plot(kr["se"], reset = FALSE, breaks = "equal", main = "bulkdensity kriging standard error")
 plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
 plot(st_geometry(s_nd), add = TRUE, col = 'orange')
 ```
 
 ### Doing this on a finer grid
 
-We can create a finer (long/lat) grid, e.g. by
+We can create a finer (long/lat) grid, e.g. by creating a 0.01 x 0.01 **degree** raster:
 
 ```{r}
 ra2 = st_as_stars(st_geometry(roi), dx = 0.01) |>
   st_crop(roi)
 kr = krige(bulk_den~1, s_nd, ra2, v.fit)
-plot(kr[1], reset = FALSE, main = "bd kriging prediction")
+plot(kr[1], reset = FALSE, main = "bulkdensity kriging prediction")
 plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
+```
+
+### Doing it properly, on a projected raster:
+
+For instance, we can take UTM zone 33 N:
+
+```{r}
+utm33n = st_crs("EPSG:32633") # or: "+proj=utm +zone=33 +north"
+roi_utm = st_transform(roi, utm33n)
+s_utm = st_transform(s, utm33n)
+v_utm = variogram(bulk_den~1, s_utm, cutoff = 40000) # cutoff now in m!
+v_utm.fit = fit.variogram(v_utm, vgm(.01, "Exp", 15000, .02)) # fitted model
+plot(v_utm, v_utm.fit) # is this O.K.?
+```
+
+We recreate a regular gird, now with grid cell size of 1 km:
+```{r}
+ra_utm = st_as_stars(st_geometry(roi_utm), dx = 1000) |>
+  st_crop(roi_utm)
+s_nd_utm = st_transform(s_nd, utm33n)
+kr_utm = krige(bulk_den~1, s_nd_utm, ra_utm, v_utm.fit)
+plot(kr_utm[1], reset = FALSE, main = "bulkdensity kriging prediction", axes = TRUE)
+plot(st_geometry(roi_utm), add = TRUE, col = NA, border = 'orange')
 ```
 
 ## Machine learning
 
 see the stars vignette: https://r-spatial.github.io/stars/articles/stars7.html
+
+## Exercises: geostatistics
+
+1. Load the .Rmd and carry out (reproduce) the analysis above in your R session (Rstudio)
+2. Repeat the analysis for another variable from the same soil dataset
+3. Try fitting a spherical variogram model, and compare this to original results
+4. Look up the meaning of the arguments `cutoff` and `width` of function `variogram`, vary their values, and try to understand what they mean
+
