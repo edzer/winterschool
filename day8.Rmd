@@ -8,3 +8,157 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+We will work with the data provide by the course management.
+
+## surface temperature
+
+```{r}
+library(stars)
+
+load("EU_COSMOLEPS_airTemperature_mean24h.RData")
+DF = DF[,-2] # remove second column, which duplicates the first
+x = st_as_stars(list(DF = t(as.matrix(DF)))) |> 
+	st_set_dimensions(1, st_geometry(Psf_in), name = "geometry") |>
+	st_set_dimensions(2, D, name = "time")
+x
+```
+
+We see that this is a 2-D data cube, with dimensions
+
+* time
+* geometry
+
+```{r}
+plot(x[,,1:9], breaks = "equal")
+```
+
+we can convert this to a multiple time series object by
+```{r}
+library(xts)
+x.xts = as.xts(x)
+plot(x.xts)
+```
+
+We can convert this to a multiple station object by
+```{r}
+x.sf = st_as_sf(x)
+dim(x.sf)
+x.sf[,1:3] # print only the first three 
+plot(x.sf) # plots by default first few attributes
+```
+
+Since the points of this data cube are on a regular raster, let us
+try to make a raster cube of it.
+
+```{r}
+r = st_rasterize(Psf_in)
+plot(r)
+```
+
+This raster maps the points one-to-one to a raster, with zero
+values where there are no points. This can be
+seen from
+```{r}
+as.vector(r[[1]]) |> # all values in a vector
+  unique() |> # all unique values
+  sort() # sorted
+as.vector(r[[1]]) |> # all values in a vector
+  unique() |> # all unique values
+  length() # includes 0 values
+dim(x) # 371-1 geometries
+```
+
+Now we need to match the 370 geometries to the raster values 1-370. First we
+set the zero values to `NA`:
+```{r}
+r[r == 0] = NA
+r
+```
+
+```{r}
+DF.r = t(as.matrix(DF))[as.vector(r[[1]]),]
+dim(DF.r)
+dim(DF.r) = c(34, 24, 255) # make it a 3D array
+DF.st = st_as_stars(list(temp = DF.r))
+```
+
+We need to create a dimensions object for this matrix:
+```{r}
+rd = st_dimensions(r) # x&y
+rd[[3]] = st_dimensions(x)[[2]] # time
+names(rd)[3] = "time"
+rd
+st_dimensions(DF.st) = rd
+plot(DF.st, breaks = "equal", col = sf.colors())
+```
+
+We can also plot fewer, e.g. every 10-th day, and add an outline of the region
+```{r}
+sel = seq(1, 255, by = 10)
+sel
+outline = st_read("roi_ca_geom.geojson")
+f = function() plot(st_geometry(outline), add=TRUE, border = "orange")
+plot(DF.st[,,,sel], hook = f)
+```
+
+We can do something similar with `ggplot2`:
+```{r}
+library(ggplot2)
+ggplot() + 
+		geom_stars(data = DF.st[,,,sel]) +
+        facet_wrap(~time) + coord_equal() +
+        theme_void() +
+        scale_x_discrete(expand = c(0,0)) +
+        scale_y_discrete(expand = c(0,0)) +
+        scale_fill_viridis_c()
+```
+
+## Analysis
+
+We can plot a single time series, e.g. by picking the row and column
+```{r}
+ts = DF.st[,20,20] |> st_as_sf(long = TRUE)
+xts(ts$temp, ts$time) |> plot()
+```
+
+We can also query a (spatial) point using `st_extract()`:
+```{r}
+pt = st_as_sfc("POINT (14.97303 40.26846)", crs = st_crs(DF.st))
+st_extract(DF.st, pt)
+st_extract(DF.st, pt) |> st_as_sf(long = TRUE)
+```
+
+We can make a time slice, e.g. for the 100-th time index by
+```{r}
+DF.st[,,,100]
+DF.st[,,,100] |> adrop()
+```
+
+We could do various aggregations, e.g. compute the mean temparture
+```{r}
+DF.m = st_apply(DF.st, c("x", "y"), mean)
+plot(DF.m, reset = FALSE)
+st_geometry(outline) |> plot(border = "orange", add = TRUE)
+```
+
+or find the day with the highest daily mean temperature
+```{r}
+library(dplyr) # select
+mx = function(x) ifelse(all(is.na(x)), NA_real_, which.max(x))
+DF.m = st_apply(DF.st, c("x", "y"), mx)
+DF.m
+plot(DF.m, reset = FALSE)
+st_geometry(outline) |> plot(border = "orange", add = TRUE)
+DF.m %>%
+  mutate(when = st_get_dimension_values(DF.st, "time")[.$mx]) %>%
+  select(when) %>%
+  plot(key.pos = 1, main = "time of maximum daily mean temp.", reset = FALSE)
+st_geometry(outline) |> plot(border = "orange", add = TRUE)
+```
+
+There are only two values in the map:
+```{r}
+(u = unique(as.vector(DF.m[[1]])))
+st_get_dimension_values(DF.st, "time")[u]
+```

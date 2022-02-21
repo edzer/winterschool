@@ -8,3 +8,135 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+## Geostatistics
+
+We will work with the soil data provided by the course managers:
+
+```{r}
+library(sf)
+(s = st_read("re_ca_topsoil.geojson"))
+plot(s)
+```
+
+We can look at one of the variables, and try to interpolate this on a regular
+grid. For this, we first need to estimate a _variogram model_ from a _sample variogram_, 
+then we need a regular grid, then we need to interpolate at the grid points (kriging).
+
+### sample variogram
+
+
+Using the data as provided, we see
+
+```{r}
+library(gstat)
+(v = variogram(bulk_den~1, s)) # sample variogram
+plot(v)
+v = variogram(bulk_den~1, s, cutoff = 40) # try with smaller cutoff
+plot(v, plot.numbers = TRUE)
+```
+
+
+### variogram model
+
+We choose an exponential model, and pick some initial
+values for
+
+* nugget (.1)
+* range (5; this is km)
+* sill (1)
+
+that work as initial values to a non-linear fit that uses a Newton-type optimization:
+
+```{r}
+v.fit = fit.variogram(v, vgm(1, "Exp", 5, .1)) # fitted model
+plot(v, v.fit) # is this O.K.?
+```
+
+### regular grid
+
+We have target locations on a regular grid, obtained by
+
+```{r}
+library(stars)
+r = read_sf("cosmoleps_ca.geojson") # grid points
+plot(r, reset = FALSE)
+roi = read_sf("roi_ca_geom.geojson")
+plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
+```
+
+which we can rasterize by
+```{r}
+ra = st_rasterize(r)
+ra
+plot(ra, reset = FALSE)
+plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
+```
+
+we see that cells with no points on them are assigned 0, so we need to `NA` those:
+```{r}
+ra[ra == 0] = NA
+plot(ra, reset = FALSE)
+plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
+```
+
+### kriging
+
+We can try to carry out kriging interpolation on this dataset, but will see that it generates errors, mentioning singular covariance matrices. A common cause of this is that we have observation locations with duplicate observations.
+
+```{r error=TRUE}
+kr = krige(bulk_den~1, s, ra, v.fit)
+```
+
+How can we find duplicate observation locations?
+
+```{r}
+e = st_equals(s)
+e
+lengths(e)
+which(lengths(e) > 1)
+```
+Removing _all_ points with an duplicate observations like we could do with
+
+
+```{eval=FALSE}
+s = s[lengths(e) == 1,]
+```
+
+is a bit rigorous; we'd like to _only_ remove the duplicate, not the _first_ points (or, possibly better, we'd like to compute averages for points with more than one observations). Let us remove the _duplicate_ points
+
+```{r}
+e[[11]]
+e[[29]] # the second is always higher;
+# take the second of each pair:
+dupl = e[lengths(e) > 1]
+w = sapply(dupl, tail, 1) # select the last from the duplicates
+s_nd = s[-w,] # deselect those second
+```
+
+Let us try the kriging again:
+```{r}
+kr = krige(bulk_den~1, s_nd, ra, v.fit)
+plot(kr[1], reset = FALSE, main = "bd kriging prediction")
+plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
+kr$se = sqrt(kr$var1.var)
+plot(kr["se"], reset = FALSE, breaks = "equal", main = "bd kriging standard error")
+plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
+plot(st_geometry(s_nd), add = TRUE, col = 'orange')
+```
+
+### Doing this on a finer grid
+
+We can create a finer (long/lat) grid, e.g. by
+
+```{r}
+ra2 = st_as_stars(st_geometry(roi), dx = 0.01) |>
+  st_crop(roi)
+kr = krige(bulk_den~1, s_nd, ra2, v.fit)
+plot(kr[1], reset = FALSE, main = "bd kriging prediction")
+plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
+```
+
+## Machine learning
+
+see the stars vignette: https://r-spatial.github.io/stars/articles/stars7.html
