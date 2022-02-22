@@ -84,7 +84,8 @@ plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
 
 We can try to carry out kriging interpolation on this dataset, but will see that it generates errors, mentioning singular covariance matrices. A common cause of this is that we have observation locations with duplicate observations.
 
-```{r error=TRUE}
+```{r error=TRUE, eval=FALSE}
+# st_crs(ra) = st_crs(s) # -> needed for outdated R and/or packages
 kr = krige(bulk_den~1, s, ra, v.fit)
 ```
 
@@ -171,3 +172,15 @@ see the stars vignette: https://r-spatial.github.io/stars/articles/stars7.html
 3. Try fitting a spherical variogram model, and compare this to original results
 4. Look up the meaning of the arguments `cutoff` and `width` of function `variogram`, vary their values, and try to understand what they mean
 
+Try OM (organic matter):
+```{r}
+v = variogram(OM~1, s_nd, cutoff = 40, width = 2) # try with smaller cutoff 
+#v = variogram(OM~1, s, cutoff = 40) # try with smaller cutoff 
+plot(v, plot.numbers = TRUE)
+v.fit = fit.variogram(v, vgm(5, "Exp", 5, 6))
+v.fit = fit.variogram(v, vgm(5, "Sph", 5, 6))
+#v.fit = fit.variogram(v, vgm(5, "Exp", 5))
+#v.fit = fit.variogram(v, vgm(5, "Exp", 5, 2), fit.sills = c(FALSE, TRUE))
+plot(v, v.fit)
+v.fit
+```
