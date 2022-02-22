@@ -177,3 +177,10 @@ There are only two values in the map:
 (u = unique(as.vector(DF.m[[1]])))
 st_get_dimension_values(DF.st, "time")[u]
 ```
+
+## Exercises
+
+1. load the .Rmd corresponding to these slides, download the dataset(s), and run the analysis.
+2. rerun the analysis but now with the maximum temperatures (other dataset to be loaded)
+3. extract the temperature time series data at the locations where the soil samples were taken (dataset of day 7)
+4. compute the maximum temperature, over the whole time series, over the area where bulk density predictions (kriged values) exceed 1.1.
