@@ -40,7 +40,22 @@ x.xts = as.xts(x)
 plot(x.xts)
 ```
 
-We can convert this to a multiple station object by
+We can convert this to a multiple station object in two ways: `sf`
+objects are `data.frame`s, meaning two-dimensional table. If you
+want to convert a three-dimensional array into a two-dimensional
+array (table), there are several possibilities.  We will **not**
+distribute geometries over columns, so either
+
+* we distribute time over multiple columns ("wide form"), or
+* we do **not** distribute time over columns ("long form")
+
+The long form:
+
+```{r}
+st_as_sf(x, long = TRUE)
+```
+
+The wide form:
 ```{r}
 x.sf = st_as_sf(x)
 dim(x.sf)
