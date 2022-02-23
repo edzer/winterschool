@@ -82,7 +82,7 @@ plot(st_geometry(roi), add = TRUE, col = NA, border = 'orange')
 
 ### kriging
 
-We can try to carry out kriging interpolation on this dataset, but will see that it generates errors, mentioning singular covariance matrices. A common cause of this is that we have observation locations with duplicate observations.
+We can try to carry out kriging interpolation on this dataset, but will see that it generates warnings, mentioning singular covariance matrices, and it returns only `NA` values. A common cause of this is that we have observation locations with duplicate observations.
 
 ```{r error=TRUE, eval=FALSE}
 # st_crs(ra) = st_crs(s) # -> needed for outdated R and/or packages
